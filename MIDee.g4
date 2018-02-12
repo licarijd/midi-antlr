@@ -15,6 +15,7 @@ int currentTempo = 120;
 private String instrumentID = "";
 private int number = 0;
 private long totalTime = 0;
+private long ticks = 0;
 
  private int convertToMidiNote(String chord) {
             if (chord == null)
@@ -116,6 +117,10 @@ playStatement
     	'for'
     	duration
     	';'
+		
+		{
+			midi.play(number, time, totalTime);
+		}
     ;
 
 waitStatement
@@ -138,8 +143,8 @@ duration
 				float duration = Float.parseFloat($FLOATING_NUMBER.getText().substring(0, $FLOATING_NUMBER.getText().length() -1));
 			}
 			
-			long durationInTicks = midi.getDurationInTicks(duration);
-			time = time + durationInTicks;
+			this.ticks = midi.getDurationInTicks(duration);
+			this.totalTime = time + durationInTicks;
 		}
     ;
 
@@ -153,7 +158,7 @@ note
 		{
 			
 			String[] note = $NOTENAME.getText()+$?.getText()+$NUMBER.getText();
-			int noteMidiNumber = convertToMidiNote($note);
+			this.number = convertToMidiNote(note);
 			
 		
 		}

@@ -104,6 +104,7 @@ instrumentBlock
     	| waitStatement
     	)*
     	'}'
+		
     ;
 
 playStatement
@@ -127,6 +128,19 @@ waitStatement
 duration
     :   NUMBER
     	| FLOATING_NUMBER
+		
+		{
+			try{
+				
+				double duration = Double.parseDouble($NUMBER.getText().substring(0, $NUMBER.getText().length() -1));
+				 
+			} catch (Exception e){
+				float duration = Float.parseFloat($FLOATING_NUMBER.getText().substring(0, $FLOATING_NUMBER.getText().length() -1));
+			}
+			
+			long durationInTicks = midi.getDurationInTicks(duration);
+			time = time + durationInTicks;
+		}
     ;
 
 note
@@ -135,12 +149,23 @@ note
     	| '_'
     	) ?
     	NUMBER
+		
+		{
+			
+			String[] note = $NOTENAME.getText()+$?.getText()+$NUMBER.getText();
+			int noteMidiNumber = convertToMidiNote($note);
+			
+		
+		}
     ;
+
+
 
 NOTENAME : [a-g];
 NUMBER: ([0-9]|'10');
 FLOATING_NUMBER: '0.'[0-9]*;
 INSTRUMENT : [a-zA-Z]+;
+TEMPO : '@'[0-9]+;
 
 /* We're going to ignore all white space characters */
 WS 
